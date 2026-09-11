@@ -24,10 +24,11 @@ The application includes the following main views:
 - Home:
     The main screen of the application, where users can see a summary of their expenses and their total spending. (It is intended to become a dashboard in the future)
 
--- Future Application Views
--Expenses:
+🛠️ Future Application Views
+
+- Expenses:
     A list of the expenses recorded in the application, including information such as description, amount, category, and date.
--Add Expense
+- Add Expense
     A form that allows users to enter and register a new expense.
 
 🗂️ Data Model
