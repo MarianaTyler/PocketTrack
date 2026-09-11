@@ -42,13 +42,15 @@ category	        string	        Category assigned to the expense
 date	            string	        Date when the expense was recorded
 
 🛠️ Technologies Used
-Ionic Framework - Mobile UI components and application framework.
-Angular - Application framework and structure.
-TypeScript - Application logic and data management.
-HTML - Application structure and content.
-CSS - Application styling and layout.
-Angular NgModules - Application module organization and configuration.
-Git - Version control and project management.
+
+- Ionic Framework - Mobile UI components and application framework.
+- Angular - Application framework and structure.
+- TypeScript - Application logic and data management.
+- HTML - Application structure and content.
+- CSS - Application styling and layout.
+- Angular NgModules - Application module organization and configuration.
+- Git - Version control and project management.
+
 📂 Project Structure
 
 The project follows an Angular and Ionic structure based on NgModules.
