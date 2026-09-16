@@ -1,1 +1,15 @@
+/* La barra se pinta en shadow DOM: se estiliza con VARIABLES,
+   no con background/color normales. */
+ion-tab-bar {
+  --background: #ffffff;
+  --color: #9aa5b1;            /* icono y texto inactivos */
+  --color-selected: #27ae60;   /* pestaña activa (verde marca) */
+  border-top: 1px solid #eceff3;
+  height: 60px;
+}
 
+ion-tab-button {
+  --padding-top: 6px;
+  font-weight: 600;
+}
+ion-tab-button ion-icon { font-size: 24px; }

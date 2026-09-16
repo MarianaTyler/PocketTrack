@@ -1,16 +1,16 @@
 import { Component } from '@angular/core';
-import { IonTabs, IonTabBar, IonTabButton, IonIcon, IonLabel } from '@ionic/angular';
 import { addIcons } from 'ionicons';
-import { triangle, images, square } from 'ionicons/icons';
+import { homeOutline, addCircleOutline } from 'ionicons/icons';
 
 @Component({
   selector: 'app-tabs',
   templateUrl: 'tabs.page.html',
   styleUrls: ['tabs.page.scss'],
-  imports: [IonTabs, IonTabBar, IonTabButton, IonIcon, IonLabel],
+  standalone: false,
 })
 export class TabsPage {
   constructor() {
-    addIcons({ triangle, images, square });
+    // Hay que registrar cada icono que se usa en la plantilla
+    addIcons({ homeOutline, addCircleOutline });
   }
 }

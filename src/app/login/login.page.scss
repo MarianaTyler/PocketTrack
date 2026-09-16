@@ -1,0 +1,91 @@
+:host {
+  display: block;
+}
+
+/* fondo degradado igual que el del formulario */
+ion-content {
+  --background: linear-gradient(rgba(196, 102, 0, 0.6), rgba(155, 89, 182, 0.6));
+}
+
+#loginform {
+  width: 400px;
+  max-width: 90%;
+  margin: 80px auto;
+  text-align: center;
+}
+
+#loginform fieldset {
+  background: white;
+  border: 0 none;
+  border-radius: 3px;
+  box-shadow: 0 0 15px 1px rgba(0, 0, 0, 0.4);
+  padding: 30px;
+  box-sizing: border-box;
+}
+
+#loginform input {
+  padding: 15px;
+  border: 1px solid #ccc;
+  border-radius: 3px;
+  margin-bottom: 10px;
+  width: 100%;
+  box-sizing: border-box;
+  color: #2c3e50;
+  font-size: 13px;
+}
+
+.action-button {
+  width: 100%;
+  background: #27ae60;
+  font-weight: bold;
+  color: white;
+  border: 0 none;
+  border-radius: 1px;
+  cursor: pointer;
+  padding: 12px;
+  margin-top: 10px;
+  font-size: 14px;
+}
+.action-button:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
+.fs-title {
+  font-size: 15px;
+  text-transform: uppercase;
+  color: #2c3e50;
+  margin-bottom: 10px;
+}
+.fs-subtitle {
+  font-weight: normal;
+  font-size: 13px;
+  color: #666;
+  margin-bottom: 20px;
+}
+.error {
+  color: #c0392b;
+  font-size: 13px;
+  margin: 8px 0;
+}
+.link {
+  font-size: 13px;
+  margin-top: 15px;
+  color: #333;
+}
+.link a {
+  color: #27ae60;
+  cursor: pointer;
+  text-decoration: underline;
+}
+/* Botón "Registrarse" de la barra superior */
+.nav-btn {
+  --background: #ffffff;
+  --background-activated: #f0f0f0;
+  --color: #27ae60;
+  --border-radius: 8px;
+  --padding-start: 14px;
+  --padding-end: 14px;
+  --box-shadow: none;
+  font-weight: 700;
+}

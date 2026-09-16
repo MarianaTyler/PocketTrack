@@ -3,5 +3,7 @@
 // The list of file replacements can be found in `angular.json`.
 
 export const environment = {
-  production: false
+  production: false,
+  // URL base de la API PHP (XAMPP). Un solo lugar para el host.
+  apiUrl: 'http://localhost:8080/login-api',
 };

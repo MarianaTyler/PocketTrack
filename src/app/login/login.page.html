@@ -1,0 +1,32 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar color="primary">
+    <ion-title>PocketTracker</ion-title>
+    <ion-buttons slot="end">
+      <ion-button class="nav-btn" fill="solid" (click)="goToRegister()">Registrarse</ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+
+  <form id="loginform">
+    <fieldset>
+      <h2 class="fs-title">Iniciar sesión</h2>
+      <h3 class="fs-subtitle">Ingresa tus credenciales</h3>
+
+      <input type="email" name="email" placeholder="Email" [(ngModel)]="email" />
+      <input type="password" name="password" placeholder="Password" [(ngModel)]="password" />
+
+      <p class="error" *ngIf="error">{{ error }}</p>
+
+      <button type="button" class="action-button" (click)="login()" [disabled]="loading">
+        {{ loading ? 'Entrando...' : 'Entrar' }}
+      </button>
+
+      <p class="link">
+        ¿No tienes cuenta? <a (click)="goToRegister()">Regístrate</a>
+      </p>
+    </fieldset>
+  </form>
+
+</ion-content>

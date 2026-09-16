@@ -1,12 +1,5 @@
 /*
  * App Global CSS
- * ----------------------------------------------------------------------------
- * Put style rules here that you want to apply globally. These styles are for
- * the entire app and not just one component. Additionally, this file can be
- * used as an entry point to import other CSS/Sass files to be included in the
- * output CSS.
- * For more information on global stylesheets, visit the documentation:
- * https://ionicframework.com/docs/layout/global-stylesheets
  */
 
 /* Core CSS required for Ionic components to work properly */
@@ -18,20 +11,39 @@
 @import "@ionic/angular/css/typography.css";
 @import "@ionic/angular/css/display.css";
 
-/* Optional CSS utils that can be commented out */
+/* Optional CSS utils */
 @import "@ionic/angular/css/padding.css";
 @import "@ionic/angular/css/float-elements.css";
 @import "@ionic/angular/css/text-alignment.css";
 @import "@ionic/angular/css/text-transformation.css";
 @import "@ionic/angular/css/flex-utils.css";
 
-/**
- * Ionic Dark Mode
- * -----------------------------------------------------
- * For more info, please see:
- * https://ionicframework.com/docs/theming/dark-mode
- */
-
+/* Modo oscuro automático DESACTIVADO */
 /* @import "@ionic/angular/css/palettes/dark.always.css"; */
 /* @import "@ionic/angular/css/palettes/dark.class.css"; */
-@import "@ionic/angular/css/palettes/dark.system.css";
+/* @import "@ionic/angular/css/palettes/dark.system.css"; */
+
+/* ================================================
+   Barra superior verde de PocketTracker
+   (global para evitar problemas de encapsulación)
+   Se aplica a los <ion-toolbar class="pt-bar">
+   ================================================ */
+ion-toolbar.pt-bar {
+  --background: #27ae60;
+  --color: #ffffff;
+  --border-width: 0;
+}
+ion-toolbar.pt-bar ion-title {
+  color: #ffffff;
+  font-weight: 800;
+}
+ion-toolbar.pt-bar .logout-btn {
+  --background: #ffffff;
+  --background-activated: #f0f0f0;
+  --background-hover: #f0f0f0;
+  --color: #27ae60;
+  --border-radius: 6px;
+  --padding-start: 16px;
+  --padding-end: 16px;
+  font-weight: 700;
+}

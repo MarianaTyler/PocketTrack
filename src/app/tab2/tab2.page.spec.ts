@@ -2,6 +2,7 @@ import { provideZonelessChangeDetection } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideIonicAngular } from '@ionic/angular';
 
+
 import { Tab2Page } from './tab2.page';
 
 describe('Tab2Page', () => {

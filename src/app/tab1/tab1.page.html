@@ -1,17 +1,50 @@
 <ion-header [translucent]="true">
   <ion-toolbar>
-    <ion-title>
-      Tab 1
-    </ion-title>
+    <ion-title>Tab 1</ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">Tab 1</ion-title>
-    </ion-toolbar>
-  </ion-header>
 
-  <app-explore-container name="Tab 1 page"></app-explore-container>
+  <!-- multistep form -->
+  <form id="msform">
+    <!-- progressbar -->
+    <ul id="progressbar">
+      <li [class.active]="currentStep >= 0">Account Setup</li>
+      <li [class.active]="currentStep >= 1">Social Profiles</li>
+      <li [class.active]="currentStep >= 2">Personal Details</li>
+    </ul>
+    <!-- fieldsets -->
+    <fieldset [ngClass]="getStepClass(0)">
+      <h2 class="fs-title">Create your account</h2>
+      <h3 class="fs-subtitle">This is step 1</h3>
+      <input type="email" name="email" placeholder="Email" [(ngModel)]="email" />
+      <input type="password" name="pass" placeholder="Password" [(ngModel)]="password" />
+      <input type="password" name="cpass" placeholder="Confirm Password" [(ngModel)]="cpass" />
+      <p class="error" *ngIf="error">{{ error }}</p>
+      <input type="button" class="next action-button" value="Next" (click)="next()" />
+    </fieldset>
+    <fieldset [ngClass]="getStepClass(1)">
+      <h2 class="fs-title">Social Profiles</h2>
+      <h3 class="fs-subtitle">Your presence on the social network</h3>
+      <input type="text" name="twitter" placeholder="Twitter" [(ngModel)]="twitter" />
+      <input type="text" name="facebook" placeholder="Facebook" [(ngModel)]="facebook" />
+      <input type="text" name="gplus" placeholder="Google Plus" [(ngModel)]="gplus" />
+      <input type="button" class="previous action-button" value="Previous" (click)="previous()" />
+      <input type="button" class="next action-button" value="Next" (click)="next()" />
+    </fieldset>
+    <fieldset [ngClass]="getStepClass(2)">
+      <h2 class="fs-title">Personal Details</h2>
+      <h3 class="fs-subtitle">We will never sell it</h3>
+      <input type="text" name="fname" placeholder="First Name" [(ngModel)]="fname" />
+      <input type="text" name="lname" placeholder="Last Name" [(ngModel)]="lname" />
+      <input type="text" name="phone" placeholder="Phone" [(ngModel)]="phone" />
+      <textarea name="address" placeholder="Address" [(ngModel)]="address"></textarea>
+      <input type="button" class="previous action-button" value="Previous" (click)="previous()" />
+      <button type="button" class="submit action-button" (click)="onSubmit()" [disabled]="loading">
+        {{ loading ? 'Registrando...' : 'Submit' }}
+      </button>
+    </fieldset>
+  </form>
+
 </ion-content>

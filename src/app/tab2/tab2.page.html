@@ -1,31 +1,57 @@
-<ion-header [translucent]="true">
-  <ion-toolbar>
-    <ion-title> Photo Gallery </ion-title>
+<ion-header class="ion-no-border">
+  <ion-toolbar color="primary">
+    <ion-title>PocketTracker</ion-title>
+    <ion-buttons slot="end">
+      <ion-button class="logout-btn" fill="solid" (click)="logout()">Salir</ion-button>
+    </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">Photo Gallery</ion-title>
-    </ion-toolbar>
-  </ion-header>
+<ion-content class="home-content">
 
-  <ion-grid>
-    <ion-row>
-      @for (photo of photoService.photos(); track photo.filepath; let position = $index) {
-      <ion-col size="6">
-        <button (click)="showActionSheet(photo, position)">
-          <img [src]="photo.webviewPath" [attr.alt]="'Photo ' + (position + 1)" loading="lazy" />
-        </button>
-      </ion-col>
-      }
-    </ion-row>
-  </ion-grid>
+  <div class="page">
 
-  <ion-fab vertical="bottom" horizontal="center" slot="fixed">
-    <ion-fab-button (click)="addPhotoToGallery()">
-      <ion-icon name="camera"></ion-icon>
-    </ion-fab-button>
-  </ion-fab>
+    <div class="welcome">
+      <p class="hi">Hola,</p>
+      <h1>{{ userName }} 👋</h1>
+    </div>
+
+    <div class="balance-card">
+      <span class="balance-label">Gastos totales</span>
+      <span class="balance-value">{{ totalExpenses | currency:'USD':'symbol':'1.2-2' }}</span>
+
+      <div class="balance-month">
+        <ion-icon name="calendar-outline"></ion-icon>
+        <span>Este mes</span>
+        <strong>{{ monthExpenses | currency:'USD':'symbol':'1.2-2' }}</strong>
+      </div>
+    </div>
+
+    <div class="recent">
+      <div class="recent-head">
+        <h2>Últimos gastos</h2>
+        <ion-button fill="clear" size="small" class="see-all" routerLink="/tabs/tab3">Agregar</ion-button>
+      </div>
+
+      <div class="expense-list" *ngIf="recentExpenses.length; else emptyState">
+        <div class="expense-item" *ngFor="let e of recentExpenses">
+          <div class="emoji-badge">{{ e.icon }}</div>
+          <div class="info">
+            <span class="category">{{ e.category }}</span>
+            <span class="date">{{ e.date }}</span>
+          </div>
+          <span class="amount">{{ e.amount | currency:'USD':'symbol':'1.0-0' }}</span>
+        </div>
+      </div>
+
+      <ng-template #emptyState>
+        <div class="empty">
+          <ion-icon name="receipt-outline"></ion-icon>
+          <p>Aún no tienes gastos registrados</p>
+        </div>
+      </ng-template>
+    </div>
+
+  </div>
+
 </ion-content>

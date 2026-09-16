@@ -1,66 +1,47 @@
-import { Component, OnInit, inject } from '@angular/core';
-import {
-  IonHeader,
-  IonToolbar,
-  IonTitle,
-  IonContent,
-  IonGrid,
-  IonRow,
-  IonCol,
-  IonFab,
-  IonFabButton,
-  IonIcon,
-  ActionSheetController,
-} from '@ionic/angular';
+import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { addIcons } from 'ionicons';
-import { camera, trash, close } from 'ionicons/icons';
-import type { UserPhoto } from '../services/photo.service';
-import { PhotoService } from '../services/photo.service';
+import { calendarOutline, receiptOutline } from 'ionicons/icons';
+import { AuthService } from '../services/auth.service';
+
+// Elemento provisional para mostrar en "Últimos gastos".
+// (Cuando conectemos el Home a la API, se reemplaza por Expense[].)
+interface RecentItem {
+  icon: string;
+  category: string;
+  amount: number;
+  date: string;
+}
 
 @Component({
   selector: 'app-tab2',
   templateUrl: 'tab2.page.html',
   styleUrls: ['tab2.page.scss'],
-  imports: [IonHeader, IonToolbar, IonTitle, IonContent, IonGrid, IonRow, IonCol, IonFab, IonFabButton, IonIcon],
+  standalone: false,
 })
 export class Tab2Page implements OnInit {
-  public photoService = inject(PhotoService);
-  private actionSheetController = inject(ActionSheetController);
 
-  constructor() {
-    addIcons({ camera, trash, close });
+  userName = '';
+  totalExpenses = 3250.0;
+  monthExpenses = 1850.0;
+
+  recentExpenses: RecentItem[] = [
+    { icon: '🍔', category: 'Comida',          amount: 250, date: '10 sep 2026' },
+    { icon: '🚕', category: 'Transporte',      amount: 120, date: '11 sep 2026' },
+    { icon: '🎮', category: 'Entretenimiento', amount: 500, date: '12 sep 2026' },
+  ];
+
+  constructor(private auth: AuthService, private router: Router) {
+    addIcons({ calendarOutline, receiptOutline });
   }
 
-  async ngOnInit() {
-    await this.photoService.loadSaved();
+  ngOnInit(): void {
+    const user = this.auth.getUser();
+    this.userName = user?.['first_name'] || user?.email || 'Usuario';
   }
 
-  addPhotoToGallery() {
-    this.photoService.addNewToGallery();
-  }
-
-  public async showActionSheet(photo: UserPhoto, position: number) {
-    const actionSheet = await this.actionSheetController.create({
-      header: 'Photos',
-      buttons: [
-        {
-          text: 'Delete',
-          role: 'destructive',
-          icon: 'trash',
-          handler: () => {
-            this.photoService.deletePhoto(photo, position);
-          },
-        },
-        {
-          text: 'Cancel',
-          icon: 'close',
-          role: 'cancel',
-          handler: () => {
-            // Nothing to do, action sheet is automatically closed
-          },
-        },
-      ],
-    });
-    await actionSheet.present();
+  logout(): void {
+    this.auth.logout();
+    this.router.navigateByUrl('/login');
   }
 }

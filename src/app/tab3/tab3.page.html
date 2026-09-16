@@ -1,17 +1,69 @@
-<ion-header [translucent]="true">
-  <ion-toolbar>
-    <ion-title>
-      Tab 3
-    </ion-title>
+<ion-header class="ion-no-border">
+  <ion-toolbar color="primary">
+    <ion-title>Agregar gasto</ion-title>
+    <ion-buttons slot="end">
+      <ion-button class="logout-btn" fill="solid" (click)="logout()">Salir</ion-button>
+    </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">Tab 3</ion-title>
-    </ion-toolbar>
-  </ion-header>
+<ion-content class="add-content">
+  <div class="page">
+    <div class="form-card">
 
-  <app-explore-container name="Tab 3 page"></app-explore-container>
+      <div class="banner"
+           *ngIf="message"
+           [class.ok]="messageType === 'success'"
+           [class.err]="messageType === 'error'">
+        {{ message }}
+      </div>
+
+      <div class="field">
+        <span class="field-label">Descripción</span>
+        <ion-input class="pt-input" placeholder="Ej. Súper del sábado"
+                   [(ngModel)]="form.description" name="description"></ion-input>
+      </div>
+
+      <div class="field">
+        <span class="field-label">Monto</span>
+        <ion-input class="pt-input" type="number" inputmode="decimal" placeholder="0.00"
+                   [(ngModel)]="form.amount" name="amount"></ion-input>
+      </div>
+
+      <div class="field">
+        <span class="field-label">Categoría</span>
+        <ion-select class="pt-input" placeholder="Elige una" interface="popover"
+                    [(ngModel)]="form.category_id" name="category_id">
+          <ion-select-option *ngFor="let c of categories" [value]="c.id">{{ c.name }}</ion-select-option>
+        </ion-select>
+      </div>
+
+      <div class="field">
+        <span class="field-label">Método de pago</span>
+        <ion-segment class="pt-segment" [(ngModel)]="form.payment_method" name="payment_method">
+          <ion-segment-button value="efectivo"><ion-label>Efectivo</ion-label></ion-segment-button>
+          <ion-segment-button value="tarjeta"><ion-label>Tarjeta</ion-label></ion-segment-button>
+          <ion-segment-button value="transferencia"><ion-label>Transfer.</ion-label></ion-segment-button>
+          <ion-segment-button value="otro"><ion-label>Otro</ion-label></ion-segment-button>
+        </ion-segment>
+      </div>
+
+      <div class="field">
+        <span class="field-label">Fecha</span>
+        <ion-input class="pt-input" type="date"
+                   [(ngModel)]="form.date" name="date"></ion-input>
+      </div>
+
+      <div class="field">
+        <span class="field-label">Nota (opcional)</span>
+        <ion-textarea class="pt-input" rows="3" placeholder="Algún detalle..."
+                      [(ngModel)]="form.note" name="note"></ion-textarea>
+      </div>
+
+      <ion-button expand="block" color="primary" class="save-btn" (click)="save()" [disabled]="saving">
+        {{ saving ? 'Guardando...' : 'Guardar gasto' }}
+      </ion-button>
+
+    </div>
+  </div>
 </ion-content>
