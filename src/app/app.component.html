@@ -1,3 +1,15 @@
 <ion-app>
   <ion-router-outlet></ion-router-outlet>
+
+  <!-- Aviso "Sin conexión" (rojo): visible mientras no hay conexión -->
+  <div class="conn-banner offline" [class.show]="conn.status() === 'offline'">
+    <ion-icon name="close-circle"></ion-icon>
+    <span>Sin conexión</span>
+  </div>
+
+  <!-- Aviso "De vuelta en línea" (verde): aparece al reconectar y se va solo -->
+  <div class="conn-banner back" [class.show]="conn.status() === 'back'">
+    <ion-icon name="checkmark-circle"></ion-icon>
+    <span>De vuelta en línea</span>
+  </div>
 </ion-app>

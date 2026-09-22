@@ -1,4 +1,7 @@
 import { Component } from '@angular/core';
+import { addIcons } from 'ionicons';
+import { closeCircle, checkmarkCircle } from 'ionicons/icons';
+import { ConnectionService } from './services/connection.service';
 
 @Component({
   selector: 'app-root',
@@ -7,5 +10,8 @@ import { Component } from '@angular/core';
   standalone: false,
 })
 export class AppComponent {
-  constructor() {}
+  // public para poder leer conn.status() en la plantilla
+  constructor(public conn: ConnectionService) {
+    addIcons({ closeCircle, checkmarkCircle });
+  }
 }

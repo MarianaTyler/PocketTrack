@@ -66,3 +66,72 @@
 .empty { text-align: center; padding: 40px 20px; color: #97a0ab; }
 .empty ion-icon { font-size: 48px; margin-bottom: 8px; }
 .empty p { margin: 0; font-size: 14px; }
+
+/* Aviso de cambios pendientes de sincronizar */
+.sync-note {
+  margin: 0 20px 8px;
+  background: #fff7e6;
+  color: #b7791f;
+  border-radius: 10px;
+  padding: 8px 12px;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+/* Botón eliminar de cada gasto */
+.del-btn {
+  --color: #c0392b;
+  --padding-start: 6px;
+  --padding-end: 6px;
+  margin: 0 0 0 4px;
+  height: 36px;
+}
+
+/* Botón editar de cada gasto */
+.edit-btn {
+  --color: #27ae60;
+  --padding-start: 6px;
+  --padding-end: 6px;
+  margin: 0 0 0 2px;
+  height: 36px;
+}
+
+/* ---- Estilos del modal de edición ---- */
+.edit-content { --background: #eef1f6; }
+
+.edit-content .form-card {
+  margin: 16px;
+  background: #ffffff;
+  border-radius: 20px;
+  padding: 20px 18px 22px;
+  box-shadow: 0 6px 20px rgba(31, 45, 61, 0.08);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.edit-content .field { display: flex; flex-direction: column; gap: 7px; }
+.edit-content .field-label { font-size: 13px; font-weight: 700; color: #56606b; padding-left: 2px; }
+.edit-content .pt-input {
+  --background: #f1f3f7;
+  --color: #1f2d3d;
+  --placeholder-color: #9aa3ad;
+  --padding-start: 14px;
+  --padding-end: 14px;
+  --padding-top: 12px;
+  --padding-bottom: 12px;
+  background: #f1f3f7;
+  border-radius: 12px;
+  font-size: 15px;
+  min-height: 48px;
+}
+.edit-content .pt-segment { --background: #f1f3f7; border-radius: 12px; padding: 3px; }
+.edit-content .save-btn {
+  margin-top: 8px;
+  --border-radius: 14px;
+  --box-shadow: 0 10px 20px rgba(39, 174, 96, 0.35);
+  height: 52px;
+  font-weight: 800;
+  font-size: 16px;
+}
+.edit-content .banner { border-radius: 12px; padding: 10px 14px; font-size: 14px; font-weight: 600; }
+.edit-content .banner.err { background: #fdecec; color: #c0392b; }

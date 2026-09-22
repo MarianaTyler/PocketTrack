@@ -1,0 +1,63 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar color="primary">
+    <ion-title>Mi perfil</ion-title>
+    <ion-buttons slot="end">
+      <ion-button class="logout-btn" fill="solid" (click)="logout()">Salir</ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="profile-content">
+  <div class="page">
+    <div class="form-card">
+
+      <div class="banner"
+           *ngIf="message"
+           [class.ok]="messageType === 'success'"
+           [class.err]="messageType === 'error'">
+        {{ message }}
+      </div>
+
+      <div class="field">
+        <span class="field-label">Nombre</span>
+        <ion-input class="pt-input" [(ngModel)]="form.first_name" name="first_name"></ion-input>
+      </div>
+
+      <div class="field">
+        <span class="field-label">Apellido</span>
+        <ion-input class="pt-input" [(ngModel)]="form.last_name" name="last_name"></ion-input>
+      </div>
+
+      <div class="field">
+        <span class="field-label">Teléfono</span>
+        <ion-input class="pt-input" type="tel" [(ngModel)]="form.phone" name="phone"></ion-input>
+      </div>
+
+      <div class="field">
+        <span class="field-label">Dirección</span>
+        <ion-input class="pt-input" [(ngModel)]="form.address" name="address"></ion-input>
+      </div>
+
+      <div class="field">
+        <span class="field-label">Correo</span>
+        <ion-input class="pt-input" type="email" [(ngModel)]="form.email" name="email"></ion-input>
+      </div>
+
+      <div class="field">
+        <span class="field-label">Nueva contraseña (opcional)</span>
+        <ion-input class="pt-input" type="password"
+                   placeholder="Déjalo vacío para no cambiarla"
+                   [(ngModel)]="form.password" name="password"></ion-input>
+      </div>
+
+      <ion-button expand="block" color="primary" class="save-btn" (click)="save()" [disabled]="saving">
+        {{ saving ? 'Guardando...' : 'Guardar cambios' }}
+      </ion-button>
+
+      <ion-button expand="block" fill="clear" class="delete-btn" (click)="confirmDelete()">
+        Eliminar perfil
+      </ion-button>
+
+    </div>
+  </div>
+</ion-content>

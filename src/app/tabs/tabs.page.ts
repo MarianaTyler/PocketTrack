@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { addIcons } from 'ionicons';
-import { homeOutline, addCircleOutline } from 'ionicons/icons';
+import { homeOutline, addCircleOutline, personCircleOutline } from 'ionicons/icons';
 
 @Component({
   selector: 'app-tabs',
@@ -11,6 +11,6 @@ import { homeOutline, addCircleOutline } from 'ionicons/icons';
 export class TabsPage {
   constructor() {
     // Hay que registrar cada icono que se usa en la plantilla
-    addIcons({ homeOutline, addCircleOutline });
+    addIcons({ homeOutline, addCircleOutline, personCircleOutline });
   }
 }

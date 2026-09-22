@@ -1,8 +1,8 @@
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthService } from '../services/auth.service';
-import { ExpenseService } from '../services/expense.service';
-import { CategoryService } from '../services/category.service';
+import { ExpenseRepository } from '../services/expense.repository';
+import { CategoryRepository } from '../services/category.repository';
 import { Category, NewExpense, PaymentMethod } from '../models';
 
 @Component({
@@ -15,7 +15,6 @@ export class Tab3Page implements OnInit {
 
   categories: Category[] = [];
 
-  // Modelo del formulario (enlazado con [(ngModel)])
   form = {
     description: '',
     amount: null as number | null,
@@ -32,15 +31,14 @@ export class Tab3Page implements OnInit {
   constructor(
     private auth: AuthService,
     private router: Router,
-    private expenseApi: ExpenseService,
-    private categoryApi: CategoryService,
+    private expenseRepo: ExpenseRepository,
+    private categoryRepo: CategoryRepository,
     private cdr: ChangeDetectorRef,
   ) {}
 
   async ngOnInit(): Promise<void> {
-    // Cargar las categorías para el selector
     try {
-      this.categories = await this.categoryApi.getCategories();
+      this.categories = await this.categoryRepo.list();
     } catch {
       this.message = 'No se pudieron cargar las categorías';
       this.messageType = 'error';
@@ -49,7 +47,6 @@ export class Tab3Page implements OnInit {
     }
   }
 
-  // Fecha de hoy en formato 'YYYY-MM-DD'
   private today(): string {
     return new Date().toISOString().slice(0, 10);
   }
@@ -66,8 +63,6 @@ export class Tab3Page implements OnInit {
     }
 
     const amount = Number(this.form.amount);
-
-    // Validación mínima en el cliente
     if (!this.form.description.trim() || !amount || amount <= 0 || !this.form.category_id) {
       this.message = 'Completa descripción, monto y categoría';
       this.messageType = 'error';
@@ -88,12 +83,12 @@ export class Tab3Page implements OnInit {
     this.cdr.detectChanges();
 
     try {
-      await this.expenseApi.createExpense(payload);
+      await this.expenseRepo.add(payload); // guarda local + encola sincronización
       this.message = 'Gasto guardado ✅';
       this.messageType = 'success';
       this.resetForm();
     } catch (err: any) {
-      this.message = err.response?.data?.error || 'No se pudo guardar el gasto';
+      this.message = 'No se pudo guardar el gasto';
       this.messageType = 'error';
     } finally {
       this.saving = false;

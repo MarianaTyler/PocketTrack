@@ -8,7 +8,6 @@
 </ion-header>
 
 <ion-content class="home-content">
-
   <div class="page">
 
     <div class="welcome">
@@ -19,7 +18,6 @@
     <div class="balance-card">
       <span class="balance-label">Gastos totales</span>
       <span class="balance-value">{{ totalExpenses | currency:'USD':'symbol':'1.2-2' }}</span>
-
       <div class="balance-month">
         <ion-icon name="calendar-outline"></ion-icon>
         <span>Este mes</span>
@@ -27,20 +25,30 @@
       </div>
     </div>
 
+    <div class="sync-note" *ngIf="pending > 0">
+      {{ pending }} cambio(s) pendiente(s) de sincronizar
+    </div>
+
     <div class="recent">
       <div class="recent-head">
-        <h2>Últimos gastos</h2>
+        <h2>Tus gastos</h2>
         <ion-button fill="clear" size="small" class="see-all" routerLink="/tabs/tab3">Agregar</ion-button>
       </div>
 
-      <div class="expense-list" *ngIf="recentExpenses.length; else emptyState">
-        <div class="expense-item" *ngFor="let e of recentExpenses">
-          <div class="emoji-badge">{{ e.icon }}</div>
+      <div class="expense-list" *ngIf="expenses.length; else emptyState">
+        <div class="expense-item" *ngFor="let e of expenses">
+          <div class="emoji-badge">{{ emojiFor(e.category_id) }}</div>
           <div class="info">
-            <span class="category">{{ e.category }}</span>
-            <span class="date">{{ e.date }}</span>
+            <span class="category">{{ nameFor(e.category_id) }}</span>
+            <span class="date">{{ e.description }} · {{ e.date }}</span>
           </div>
           <span class="amount">{{ e.amount | currency:'USD':'symbol':'1.0-0' }}</span>
+          <ion-button fill="clear" class="edit-btn" (click)="openEdit(e)">
+            <ion-icon name="create-outline" slot="icon-only"></ion-icon>
+          </ion-button>
+          <ion-button fill="clear" class="del-btn" (click)="confirmDelete(e)">
+            <ion-icon name="trash-outline" slot="icon-only"></ion-icon>
+          </ion-button>
         </div>
       </div>
 
@@ -53,5 +61,72 @@
     </div>
 
   </div>
+
+  <!-- Modal de edición de gasto -->
+  <ion-modal [isOpen]="editOpen" (ionModalDidDismiss)="editOpen = false">
+    <ng-template>
+      <ion-header class="ion-no-border">
+        <ion-toolbar color="primary">
+          <ion-title>Editar gasto</ion-title>
+          <ion-buttons slot="end">
+            <ion-button class="logout-btn" fill="solid" (click)="closeEdit()">Cerrar</ion-button>
+          </ion-buttons>
+        </ion-toolbar>
+      </ion-header>
+
+      <ion-content class="edit-content">
+        <div class="page">
+          <div class="form-card">
+
+            <div class="banner err" *ngIf="editMessage">{{ editMessage }}</div>
+
+            <div class="field">
+              <span class="field-label">Descripción</span>
+              <ion-input class="pt-input" [(ngModel)]="editForm.description" name="e_description"></ion-input>
+            </div>
+
+            <div class="field">
+              <span class="field-label">Monto</span>
+              <ion-input class="pt-input" type="number" inputmode="decimal"
+                         [(ngModel)]="editForm.amount" name="e_amount"></ion-input>
+            </div>
+
+            <div class="field">
+              <span class="field-label">Categoría</span>
+              <ion-select class="pt-input" interface="popover"
+                          [(ngModel)]="editForm.category_id" name="e_category">
+                <ion-select-option *ngFor="let c of categories" [value]="c.id">{{ c.name }}</ion-select-option>
+              </ion-select>
+            </div>
+
+            <div class="field">
+              <span class="field-label">Método de pago</span>
+              <ion-segment class="pt-segment" [(ngModel)]="editForm.payment_method" name="e_pay">
+                <ion-segment-button value="efectivo"><ion-label>Efectivo</ion-label></ion-segment-button>
+                <ion-segment-button value="tarjeta"><ion-label>Tarjeta</ion-label></ion-segment-button>
+                <ion-segment-button value="transferencia"><ion-label>Transfer.</ion-label></ion-segment-button>
+                <ion-segment-button value="otro"><ion-label>Otro</ion-label></ion-segment-button>
+              </ion-segment>
+            </div>
+
+            <div class="field">
+              <span class="field-label">Fecha</span>
+              <ion-input class="pt-input" type="date" [(ngModel)]="editForm.date" name="e_date"></ion-input>
+            </div>
+
+            <div class="field">
+              <span class="field-label">Nota (opcional)</span>
+              <ion-textarea class="pt-input" rows="2" [(ngModel)]="editForm.note" name="e_note"></ion-textarea>
+            </div>
+
+            <ion-button expand="block" color="primary" class="save-btn" (click)="saveEdit()" [disabled]="editSaving">
+              {{ editSaving ? 'Guardando...' : 'Guardar cambios' }}
+            </ion-button>
+
+          </div>
+        </div>
+      </ion-content>
+    </ng-template>
+  </ion-modal>
 
 </ion-content>
