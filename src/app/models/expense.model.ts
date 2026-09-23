@@ -4,8 +4,7 @@
 // ============================================================
 import { PaymentMethod } from './payment-method';
 
-// Un gasto tal como lo DEVUELVE la API (coincide 1:1 con las
-// columnas de la tabla `expenses`).
+// Un gasto tal como lo DEVUELVE la API 
 export interface Expense {
   id: number;
   user_id: number;
@@ -14,12 +13,11 @@ export interface Expense {
   amount: number;
   note: string | null;
   payment_method: PaymentMethod;
-  date: string;        // formato 'YYYY-MM-DD'
-  created_at: string;  // momento en que se guardó el registro
+  date: string;       
+  created_at: string;  
 }
 
-// Datos para CREAR un gasto (POST): todavía no existen `id` ni
-// `created_at`, esos los genera la base de datos.
+// Datos para CREAR un gasto (POST)
 export interface NewExpense {
   user_id: number;
   category_id: number;

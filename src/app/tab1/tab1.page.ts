@@ -1,7 +1,9 @@
 import { Component, ChangeDetectorRef } from '@angular/core';
 import { Router } from '@angular/router';
 import axios from 'axios';
+import { environment } from '../../environments/environment';
 import { AuthService } from '../services/auth.service';
+import { NewUser } from '../models';
 
 @Component({
   selector: 'app-tab1',
@@ -28,48 +30,82 @@ export class Tab1Page {
   error = '';
   loading = false;
 
-  private apiUrl = 'http://localhost:8080/login-api';
+  private apiUrl = environment.apiUrl;
 
   constructor(
     private router: Router,
     private cdr: ChangeDetectorRef,
-    private auth: AuthService
+    private auth: AuthService,
   ) {}
 
+  private isValidEmail(email: string): boolean {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim());
+  }
+
+  // Valida el paso actual antes de avanzar. En el paso 1 exige
+  // correo válido, contraseña de 6+ y que coincidan.
   next(): void {
-    if (this.currentStep < this.totalSteps - 1) { this.currentStep++; }
+    this.error = '';
+
+    if (this.currentStep === 0) {
+      if (!this.email.trim()) {
+        this.error = 'El correo es obligatorio';
+        this.cdr.detectChanges();
+        return;
+      }
+      if (!this.isValidEmail(this.email)) {
+        this.error = 'El correo no es válido';
+        this.cdr.detectChanges();
+        return;
+      }
+      if (this.password.length < 6) {
+        this.error = 'La contraseña debe tener al menos 6 caracteres';
+        this.cdr.detectChanges();
+        return;
+      }
+      if (this.password !== this.cpass) {
+        this.error = 'Las contraseñas no coinciden';
+        this.cdr.detectChanges();
+        return;
+      }
+    }
+
+    if (this.currentStep < this.totalSteps - 1) {
+      this.currentStep++;
+      this.cdr.detectChanges();
+    }
   }
 
   previous(): void {
-    if (this.currentStep > 0) { this.currentStep--; }
+    this.error = '';
+    if (this.currentStep > 0) {
+      this.currentStep--;
+      this.cdr.detectChanges();
+    }
   }
 
-  getStepClass(index: number): 'done' | 'active' | 'upcoming' {
-    if (index === this.currentStep) return 'active';
-    return index < this.currentStep ? 'done' : 'upcoming';
+  goToLogin(): void {
+    this.router.navigateByUrl('/login');
   }
 
   async onSubmit(): Promise<void> {
     this.error = '';
 
-    if (!this.email || !this.password) {
-      this.error = 'El email y la contraseña son obligatorios';
-      this.currentStep = 0;
-      this.cdr.detectChanges();
-      return;
-    }
-
-    if (this.password !== this.cpass) {
-      this.error = 'Las contraseñas no coinciden';
+    // Revalida por si acaso (mismo criterio del paso 1)
+    if (!this.isValidEmail(this.email) || this.password.length < 6 || this.password !== this.cpass) {
+      this.error = 'Revisa el correo y la contraseña';
       this.currentStep = 0;
       this.cdr.detectChanges();
       return;
     }
 
     this.loading = true;
+    this.cdr.detectChanges();
 
     try {
-      const res = await axios.post(`${this.apiUrl}/register.php`, {
+      // Datos para CREAR el usuario, tipados con la interface NewUser
+      // (lleva password; no lleva id ni created_at, esos los genera la BD)
+      const payload: NewUser = {
         email: this.email,
         password: this.password,
         first_name: this.fname,
@@ -79,11 +115,21 @@ export class Tab1Page {
         twitter: this.twitter,
         facebook: this.facebook,
         gplus: this.gplus,
-      });
+      };
+
+      const res = await axios.post(`${this.apiUrl}/register.php`, payload);
 
       const data = res.data;
       if (data.ok) {
-        this.auth.setUser({ id: data.id, email: this.email });
+        // Guarda la sesión con el nombre para que el saludo del inicio sea correcto
+        this.auth.setUser({
+          id: data.id,
+          email: this.email,
+          first_name: this.fname,
+          last_name: this.lname,
+          phone: this.phone,
+          address: this.address,
+        });
         this.router.navigateByUrl('/tabs/tab2');
       } else {
         this.error = data.error || 'No se pudo registrar';
@@ -91,7 +137,8 @@ export class Tab1Page {
     } catch (err: any) {
       const status = err.response?.status;
       if (status === 409) {
-        this.error = 'Ese email ya está registrado';
+        this.error = 'Ese correo ya está registrado';
+        this.currentStep = 0; // regresa al paso del correo para corregirlo
       } else if (status === 422) {
         this.error = err.response?.data?.error || 'Datos inválidos';
       } else if (!err.response) {

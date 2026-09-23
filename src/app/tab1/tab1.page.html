@@ -1,50 +1,104 @@
-<ion-header [translucent]="true">
-  <ion-toolbar>
-    <ion-title>Tab 1</ion-title>
+<ion-header class="ion-no-border">
+  <ion-toolbar color="primary">
+    <ion-title>Crear cuenta</ion-title>
+    <ion-buttons slot="end">
+      <ion-button class="logout-btn" fill="solid" (click)="goToLogin()">Entrar</ion-button>
+    </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true">
+<ion-content [fullscreen]="true" class="register-content">
+  <div class="page">
 
-  <!-- multistep form -->
-  <form id="msform">
-    <!-- progressbar -->
-    <ul id="progressbar">
-      <li [class.active]="currentStep >= 0">Account Setup</li>
-      <li [class.active]="currentStep >= 1">Social Profiles</li>
-      <li [class.active]="currentStep >= 2">Personal Details</li>
-    </ul>
-    <!-- fieldsets -->
-    <fieldset [ngClass]="getStepClass(0)">
-      <h2 class="fs-title">Create your account</h2>
-      <h3 class="fs-subtitle">This is step 1</h3>
-      <input type="email" name="email" placeholder="Email" [(ngModel)]="email" />
-      <input type="password" name="pass" placeholder="Password" [(ngModel)]="password" />
-      <input type="password" name="cpass" placeholder="Confirm Password" [(ngModel)]="cpass" />
-      <p class="error" *ngIf="error">{{ error }}</p>
-      <input type="button" class="next action-button" value="Next" (click)="next()" />
-    </fieldset>
-    <fieldset [ngClass]="getStepClass(1)">
-      <h2 class="fs-title">Social Profiles</h2>
-      <h3 class="fs-subtitle">Your presence on the social network</h3>
-      <input type="text" name="twitter" placeholder="Twitter" [(ngModel)]="twitter" />
-      <input type="text" name="facebook" placeholder="Facebook" [(ngModel)]="facebook" />
-      <input type="text" name="gplus" placeholder="Google Plus" [(ngModel)]="gplus" />
-      <input type="button" class="previous action-button" value="Previous" (click)="previous()" />
-      <input type="button" class="next action-button" value="Next" (click)="next()" />
-    </fieldset>
-    <fieldset [ngClass]="getStepClass(2)">
-      <h2 class="fs-title">Personal Details</h2>
-      <h3 class="fs-subtitle">We will never sell it</h3>
-      <input type="text" name="fname" placeholder="First Name" [(ngModel)]="fname" />
-      <input type="text" name="lname" placeholder="Last Name" [(ngModel)]="lname" />
-      <input type="text" name="phone" placeholder="Phone" [(ngModel)]="phone" />
-      <textarea name="address" placeholder="Address" [(ngModel)]="address"></textarea>
-      <input type="button" class="previous action-button" value="Previous" (click)="previous()" />
-      <button type="button" class="submit action-button" (click)="onSubmit()" [disabled]="loading">
-        {{ loading ? 'Registrando...' : 'Submit' }}
-      </button>
-    </fieldset>
-  </form>
+    <!-- Indicador de pasos -->
+    <div class="steps">
+      <div class="step" [class.active]="currentStep >= 0">
+        <span class="dot">1</span><span class="lbl">Cuenta</span>
+      </div>
+      <div class="bar" [class.on]="currentStep >= 1"></div>
+      <div class="step" [class.active]="currentStep >= 1">
+        <span class="dot">2</span><span class="lbl">Redes</span>
+      </div>
+      <div class="bar" [class.on]="currentStep >= 2"></div>
+      <div class="step" [class.active]="currentStep >= 2">
+        <span class="dot">3</span><span class="lbl">Datos</span>
+      </div>
+    </div>
 
+    <div class="form-card">
+
+      <!-- Paso 1: Cuenta -->
+      <div *ngIf="currentStep === 0">
+        <h2 class="fs-title">Crea tu cuenta</h2>
+        <p class="fs-subtitle">Paso 1 de 3</p>
+
+        <div class="field">
+          <span class="field-label">Correo</span>
+          <ion-input class="pt-input" type="email" placeholder="correo@ejemplo.com"
+                     [(ngModel)]="email" name="email"></ion-input>
+        </div>
+        <div class="field">
+          <span class="field-label">Contraseña</span>
+          <ion-input class="pt-input" type="password" placeholder="Mínimo 6 caracteres"
+                     [(ngModel)]="password" name="password"></ion-input>
+        </div>
+        <div class="field">
+          <span class="field-label">Confirmar contraseña</span>
+          <ion-input class="pt-input" type="password" placeholder="Repite la contraseña"
+                     [(ngModel)]="cpass" name="cpass"></ion-input>
+        </div>
+
+        <div class="banner err" *ngIf="error">{{ error }}</div>
+
+        <ion-button expand="block" color="primary" class="nav-btn" (click)="next()">Siguiente</ion-button>
+      </div>
+
+      <!-- Paso 2: Redes -->
+      <div *ngIf="currentStep === 1">
+        <h2 class="fs-title">Perfiles sociales</h2>
+        <p class="fs-subtitle">Opcional</p>
+
+        <div class="field"><span class="field-label">Twitter</span>
+          <ion-input class="pt-input" placeholder="@usuario" [(ngModel)]="twitter" name="twitter"></ion-input></div>
+        <div class="field"><span class="field-label">Facebook</span>
+          <ion-input class="pt-input" [(ngModel)]="facebook" name="facebook"></ion-input></div>
+        <div class="field"><span class="field-label">Google Plus</span>
+          <ion-input class="pt-input" [(ngModel)]="gplus" name="gplus"></ion-input></div>
+
+        <div class="banner err" *ngIf="error">{{ error }}</div>
+
+        <div class="btn-row">
+          <ion-button expand="block" fill="outline" color="primary" class="nav-btn" (click)="previous()">Anterior</ion-button>
+          <ion-button expand="block" color="primary" class="nav-btn" (click)="next()">Siguiente</ion-button>
+        </div>
+      </div>
+
+      <!-- Paso 3: Datos personales -->
+      <div *ngIf="currentStep === 2">
+        <h2 class="fs-title">Datos personales</h2>
+        <p class="fs-subtitle">Nunca los compartiremos</p>
+
+        <div class="field"><span class="field-label">Nombre</span>
+          <ion-input class="pt-input" [(ngModel)]="fname" name="fname"></ion-input></div>
+        <div class="field"><span class="field-label">Apellido</span>
+          <ion-input class="pt-input" [(ngModel)]="lname" name="lname"></ion-input></div>
+        <div class="field"><span class="field-label">Teléfono</span>
+          <ion-input class="pt-input" type="tel" [(ngModel)]="phone" name="phone"></ion-input></div>
+        <div class="field"><span class="field-label">Dirección</span>
+          <ion-textarea class="pt-input" rows="2" [(ngModel)]="address" name="address"></ion-textarea></div>
+
+        <div class="banner err" *ngIf="error">{{ error }}</div>
+
+        <div class="btn-row">
+          <ion-button expand="block" fill="outline" color="primary" class="nav-btn" (click)="previous()">Anterior</ion-button>
+          <ion-button expand="block" color="primary" class="nav-btn" (click)="onSubmit()" [disabled]="loading">
+            {{ loading ? 'Registrando...' : 'Registrarme' }}
+          </ion-button>
+        </div>
+      </div>
+
+      <p class="link">¿Ya tienes cuenta? <a (click)="goToLogin()">Inicia sesión</a></p>
+
+    </div>
+  </div>
 </ion-content>

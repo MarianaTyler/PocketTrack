@@ -16,7 +16,7 @@
     </div>
 
     <div class="balance-card">
-      <span class="balance-label">Gastos totales</span>
+      <span class="balance-label">Gastos totales de este año</span>
       <span class="balance-value">{{ totalExpenses | currency:'USD':'symbol':'1.2-2' }}</span>
       <div class="balance-month">
         <ion-icon name="calendar-outline"></ion-icon>
@@ -35,8 +35,31 @@
         <ion-button fill="clear" size="small" class="see-all" routerLink="/tabs/tab3">Agregar</ion-button>
       </div>
 
-      <div class="expense-list" *ngIf="expenses.length; else emptyState">
-        <div class="expense-item" *ngFor="let e of expenses">
+      <!-- Filtros (persistentes) -->
+      <div class="filters">
+        <ion-select class="filter-select" interface="popover" label="Periodo" label-placement="stacked"
+                    [(ngModel)]="dateFilter" (ionChange)="onFilterChange()">
+          <ion-select-option value="all">Todo el tiempo</ion-select-option>
+          <ion-select-option value="week">Última semana</ion-select-option>
+          <ion-select-option value="month">Último mes</ion-select-option>
+          <ion-select-option value="3months">Últimos 3 meses</ion-select-option>
+          <ion-select-option value="year">Último año</ion-select-option>
+        </ion-select>
+
+        <ion-select class="filter-select" interface="popover" label="Categoría" label-placement="stacked"
+                    [(ngModel)]="categoryFilter" (ionChange)="onFilterChange()">
+          <ion-select-option [value]="'all'">Todas</ion-select-option>
+          <ion-select-option *ngFor="let c of categories" [value]="c.id">{{ c.name }}</ion-select-option>
+        </ion-select>
+      </div>
+
+      <div class="filters-clear" *ngIf="filtersActive">
+        <span class="count">{{ filtered.length }} de {{ expenses.length }} gasto(s)</span>
+        <ion-button fill="clear" size="small" class="clear-filters" (click)="clearFilters()">Limpiar filtros</ion-button>
+      </div>
+
+      <div class="expense-list" *ngIf="filtered.length; else emptyState">
+        <div class="expense-item" *ngFor="let e of filtered">
           <div class="emoji-badge">{{ emojiFor(e.category_id) }}</div>
           <div class="info">
             <span class="category">{{ nameFor(e.category_id) }}</span>
@@ -55,7 +78,7 @@
       <ng-template #emptyState>
         <div class="empty">
           <ion-icon name="receipt-outline"></ion-icon>
-          <p>Aún no tienes gastos registrados</p>
+          <p>{{ expenses.length ? 'No hay gastos con estos filtros' : 'Aún no tienes gastos registrados' }}</p>
         </div>
       </ng-template>
     </div>

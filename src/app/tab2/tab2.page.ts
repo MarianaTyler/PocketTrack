@@ -6,7 +6,10 @@ import { calendarOutline, receiptOutline, trashOutline, createOutline } from 'io
 import { AuthService } from '../services/auth.service';
 import { ExpenseRepository } from '../services/expense.repository';
 import { CategoryRepository } from '../services/category.repository';
+import { StorageService } from '../services/storage.service';
 import { Category, Expense, NewExpense, PaymentMethod } from '../models';
+
+type DateFilter = 'all' | 'week' | 'month' | '3months' | 'year';
 
 @Component({
   selector: 'app-tab2',
@@ -17,11 +20,17 @@ import { Category, Expense, NewExpense, PaymentMethod } from '../models';
 export class Tab2Page implements OnInit {
 
   userName = '';
-  expenses: Expense[] = [];
+  expenses: Expense[] = [];   // lista completa (para los totales)
+  filtered: Expense[] = [];   // lista mostrada (con filtros aplicados)
   categories: Category[] = [];
   totalExpenses = 0;
   monthExpenses = 0;
   pending = 0;
+
+  // ----- Filtros (persistentes) -----
+  dateFilter: DateFilter = 'all';
+  categoryFilter: number | 'all' = 'all';
+  private readonly FILTER_KEY = 'home_filter';
 
   private catMap = new Map<number, string>();
 
@@ -44,6 +53,7 @@ export class Tab2Page implements OnInit {
     private router: Router,
     private repo: ExpenseRepository,
     private categoryRepo: CategoryRepository,
+    private storage: StorageService,
     private alertCtrl: AlertController,
     private cdr: ChangeDetectorRef,
   ) {
@@ -51,32 +61,94 @@ export class Tab2Page implements OnInit {
   }
 
   ngOnInit(): void {
-    const user = this.auth.getUser();
-    this.userName = user?.['first_name'] || user?.email || 'Usuario';
-    // La carga de datos se hace en ionViewWillEnter (que también corre
-    // en la primera entrada), para no lanzar dos cargas por entrada.
+    // La carga (incluido el nombre del usuario) se hace en ionViewWillEnter,
+    // que corre en la primera entrada y cada vez que se vuelve a la pestaña.
+    // Así el saludo se actualiza si inicia sesión un usuario distinto.
   }
 
-  // Ionic llama esto cada vez que se entra a la pestaña -> se refresca
   ionViewWillEnter(): void {
     void this.load();
   }
 
   private async load(): Promise<void> {
-    const userId = this.auth.getUser()?.id ?? 0;
+    const user = this.auth.getUser();
+    this.userName = user?.['first_name'] || user?.email || 'Usuario';
+    const userId = user?.id ?? 0;
 
     this.categories = await this.categoryRepo.list();
     this.catMap = new Map(this.categories.map((c) => [c.id, c.name]));
 
     this.expenses = await this.repo.list(userId);
     this.pending = await this.repo.pendingCount();
-    this.recompute();
+
+    await this.loadFilter();  // restaura filtros guardados
+    this.applyFilter();       // aplica filtros a la lista mostrada
+    this.recompute();         // totales (sobre la lista completa)
     this.cdr.detectChanges();
   }
 
+  // ---------- Filtros ----------
+  async onFilterChange(): Promise<void> {
+    await this.saveFilter();
+    this.applyFilter();
+    this.cdr.detectChanges();
+  }
+
+  async clearFilters(): Promise<void> {
+    this.dateFilter = 'all';
+    this.categoryFilter = 'all';
+    await this.saveFilter();
+    this.applyFilter();
+    this.cdr.detectChanges();
+  }
+
+  get filtersActive(): boolean {
+    return this.dateFilter !== 'all' || this.categoryFilter !== 'all';
+  }
+
+  private applyFilter(): void {
+    const cutoff = this.cutoffDate(this.dateFilter);
+    this.filtered = this.expenses.filter((e) => {
+      const okDate = !cutoff || (e.date || '') >= cutoff;
+      const okCat = this.categoryFilter === 'all' || e.category_id === this.categoryFilter;
+      return okDate && okCat;
+    });
+  }
+
+  // Devuelve la fecha límite 'YYYY-MM-DD' del periodo (o null = sin límite)
+  private cutoffDate(range: DateFilter): string | null {
+    if (range === 'all') return null;
+    const d = new Date();
+    if (range === 'week') d.setDate(d.getDate() - 7);
+    else if (range === 'month') d.setMonth(d.getMonth() - 1);
+    else if (range === '3months') d.setMonth(d.getMonth() - 3);
+    else if (range === 'year') d.setFullYear(d.getFullYear() - 1);
+    return d.toISOString().slice(0, 10);
+  }
+
+  private async saveFilter(): Promise<void> {
+    await this.storage.set(this.FILTER_KEY, {
+      dateFilter: this.dateFilter,
+      categoryFilter: this.categoryFilter,
+    });
+  }
+
+  private async loadFilter(): Promise<void> {
+    const f = await this.storage.get<{ dateFilter: DateFilter; categoryFilter: number | 'all' }>(this.FILTER_KEY);
+    if (f) {
+      this.dateFilter = f.dateFilter ?? 'all';
+      this.categoryFilter = f.categoryFilter ?? 'all';
+    }
+  }
+
   private recompute(): void {
-    const ym = new Date().toISOString().slice(0, 7); // 'YYYY-MM'
-    this.totalExpenses = this.expenses.reduce((s, e) => s + Number(e.amount), 0);
+    const now = new Date().toISOString();
+    const year = now.slice(0, 4); // 'YYYY'
+    const ym = now.slice(0, 7);   // 'YYYY-MM'
+    // "Gastos totales de este año": suma solo los gastos del año en curso
+    this.totalExpenses = this.expenses
+      .filter((e) => (e.date || '').slice(0, 4) === year)
+      .reduce((s, e) => s + Number(e.amount), 0);
     this.monthExpenses = this.expenses
       .filter((e) => (e.date || '').slice(0, 7) === ym)
       .reduce((s, e) => s + Number(e.amount), 0);
